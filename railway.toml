@@ -1,2 +1,2 @@
-[variables]
-PYTHON_VERSION = "3.11.0"
+[build]
+env = { PYTHON_VERSION = "3.11" }
