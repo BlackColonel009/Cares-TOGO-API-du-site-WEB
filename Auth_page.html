@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        async function handleAuth(endpoint, formId) {
+            const form = document.getElementById(formId);
+            const formData = new FormData(form);
+            const jsonData = Object.fromEntries(formData.entries());
+            
+            const response = await fetch(`http://127.0.0.1:8000/auth/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonData)
+            });
+            
+            const data = await response.json();
+            if (response.ok) {
+                alert(`Succès : ${JSON.stringify(data)}`);
+                if (endpoint === "login") {
+                    localStorage.setItem("token", data.access_token);
+                    window.location.href = "blog.html";
+                }
+            } else {
+                alert(`Erreur : ${data.detail}`);
+            }
+        }
+    </script>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <ul class="nav nav-tabs" id="authTabs">
+            <li class="nav-item"><a class="nav-link active" href="#login" data-bs-toggle="tab">Connexion</a></li>
+            <li class="nav-item"><a class="nav-link" href="#signup" data-bs-toggle="tab">Inscription</a></li>
+            <li class="nav-item"><a class="nav-link" href="#reset" data-bs-toggle="tab">Mot de passe oublié</a></li>
+        </ul>
+        <div class="tab-content p-4 bg-white border rounded mt-3">
+            <div class="tab-pane fade show active" id="login">
+                <h3>Connexion</h3>
+                <form id="loginForm">
+                    <div class="mb-3"><input type="email" name="username" class="form-control" placeholder="Email" required></div>
+                    <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Mot de passe" required></div>
+                    <button type="button" class="btn btn-primary" onclick="handleAuth('login', 'loginForm')">Se connecter</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="signup">
+                <h3>Inscription</h3>
+                <form id="signupForm">
+                    <div class="mb-3"><input type="text" name="username" class="form-control" placeholder="Nom d'utilisateur" required></div>
+                    <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
+                    <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Mot de passe" required></div>
+                    <button type="button" class="btn btn-success" onclick="handleAuth('signup', 'signupForm')">S'inscrire</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="reset">
+                <h3>Mot de passe oublié</h3>
+                <form id="resetForm">
+                    <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
+                    <button type="button" class="btn btn-warning" onclick="handleAuth('forgot-password', 'resetForm')">Réinitialiser</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

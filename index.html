@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARES TOGO - Accueil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .carousel {
+            width: 100%;
+            overflow: hidden;
+        }
+        .carousel img {
+            width: 100%;
+            height: auto;
+            display: none;
+        }
+        .content {
+            padding: 20px;
+        }
+        .social-links a {
+            margin: 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="text_1">Chargement...</h1>
+    <div class="carousel" id="carousel">
+        <!-- Images dynamiques -->
+    </div>
+    
+    <div class="content">
+        <h2 id="text_2">...</h2>
+        <p id="text_3">...</p>
+    </div>
+
+    <div class="social-links" id="social_links">
+        <!-- Liens dynamiques -->
+    </div>
+
+    <p>Contact : <span id="contact_info">...</span></p>
+
+    <script>
+        async function loadHomepage() {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/homepage/");
+                const data = await response.json();
+
+                // Mise à jour des textes
+                document.getElementById("text_1").innerText = data.text_1 || "Bienvenue!";
+                document.getElementById("text_2").innerText = data.text_2 || "";
+                document.getElementById("text_3").innerText = data.text_3 || "";
+                document.getElementById("contact_info").innerText = data.contact_info || "Email non disponible";
+
+                // Affichage des images du carrousel
+                const carousel = document.getElementById("carousel");
+                carousel.innerHTML = "";
+                data.carousel_images.forEach((imgUrl, index) => {
+                    const img = document.createElement("img");
+                    img.src = imgUrl;
+                    img.style.display = index === 0 ? "block" : "none"; // Affiche la première image
+                    carousel.appendChild(img);
+                });
+
+                // Gestion du carrousel
+                let currentIndex = 0;
+                setInterval(() => {
+                    const images = document.querySelectorAll(".carousel img");
+                    if (images.length > 0) {
+                        images[currentIndex].style.display = "none";
+                        currentIndex = (currentIndex + 1) % images.length;
+                        images[currentIndex].style.display = "block";
+                    }
+                }, 3000);
+
+                // Affichage des liens sociaux
+                const socialLinksContainer = document.getElementById("social_links");
+                socialLinksContainer.innerHTML = "";
+                for (const [name, url] of Object.entries(data.social_links)) {
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.target = "_blank";
+                    link.innerText = name;
+                    socialLinksContainer.appendChild(link);
+                }
+                
+            } catch (error) {
+                console.error("Erreur lors du chargement de la page d'accueil :", error);
+            }
+        }
+
+        // Charger la page d'accueil au démarrage
+        loadHomepage();
+    </script>
+
+</body>
+</html>

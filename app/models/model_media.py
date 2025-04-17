@@ -8,10 +8,13 @@ class Media(Base):
     __tablename__ = 'media'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)  # Nom du fichier
-    file_url = Column(String)  # URL du fichier média
-    media_type = Column(String)  # 'image', 'video', 'book'
-    description = Column(String)
+    name = Column(String, nullable=False)
+    file_url = Column(String, nullable=False)  # ✅ URL du fichier stocké
+    media_type = Column(String, nullable=False)  # ✅ image, video, document, etc.
+    description = Column(String, nullable=True) 
 
-    blog_post_id = Column(Integer, ForeignKey('blog_posts.id'))  # Lier ce média à un article de blog
-    blog_post = relationship("BlogPost", back_populates="media")
+    blog_post_id = Column(Integer, ForeignKey('blog_posts.id'))  
+    blog_post = relationship("BlogPost", back_populates="media")  # ✅ Relation correcte
+
+    user_id = Column(Integer, ForeignKey("users.id"))  # ✅ L'utilisateur qui a uploadé
+    user = relationship("User", back_populates="media")

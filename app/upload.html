@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARES TOGO - Test API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            margin: auto;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .article {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        }
+        .comments {
+            margin-top: 10px;
+            padding-left: 15px;
+            border-left: 3px solid #007BFF;
+        }
+        .comment {
+            margin: 5px 0;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Publier un article</h2>
+    <input type="text" id="title" placeholder="Titre de l'article">
+    <textarea id="content" placeholder="Contenu de l'article"></textarea>
+    <input type="file" id="image">
+    <button onclick="postArticle()">Publier</button>
+
+    <h2>Articles</h2>
+    <div id="articles"></div>
+</div>
+
+<script>
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2xvQGdtYWlsLmNvbSIsImV4cCI6MTc0MDU5NDM2MX0.8C2Stfv0dfIn5ht4Uq8L1rBZe0SaCZfj3W3YKyu3dYA";
+
+    async function fetchArticles() {
+        const response = await fetch("http://127.0.0.1:8000/blog/", {
+            method: "GET"
+        });
+        const articles = await response.json();
+        const articlesContainer = document.getElementById("articles");
+        articlesContainer.innerHTML = "";
+
+        articles.forEach(article => {
+            let articleHTML = `
+                <div class="article">
+                    <h3>${article.title}</h3>
+                    <p>${article.content}</p>
+                    ${article.image_url ? `<img src="http://127.0.0.1:8000/${article.image_url}" width="100%">` : ""}
+                    <h4>Commentaires</h4>
+                    <div id="comments-${article.id}" class="comments"></div>
+                    <input type="text" id="comment-${article.id}" placeholder="Ajouter un commentaire">
+                    <button onclick="postComment(${article.id})">Commenter</button>
+                </div>
+            `;
+            articlesContainer.innerHTML += articleHTML;
+            fetchComments(article.id);
+        });
+    }
+
+    async function postArticle() {
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+        const imageFile = document.getElementById("image").files[0];
+    
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+        if (imageFile) {
+            formData.append("file", imageFile);
+        }
+    
+        const response = await fetch("http://127.0.0.1:8000/blog/", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            body: formData
+        });
+    
+        if (response.ok) {
+            alert("Article publié !");
+            fetchArticles();
+        } else {
+            const error = await response.json();
+            alert("Erreur lors de la publication : " + JSON.stringify(error));
+        }
+    }
+    
+
+    async function fetchComments(blog_id) {
+        const response = await fetch(`http://127.0.0.1:8000/comments/${blog_id}`);
+        const comments = await response.json();
+        const commentsContainer = document.getElementById(`comments-${blog_id}`);
+        commentsContainer.innerHTML = "";
+        comments.forEach(comment => {
+            commentsContainer.innerHTML += `<div class="comment"><strong>${comment.user_id}</strong>: ${comment.content}</div>`;
+        });
+    }
+
+    async function postComment(blog_id) {
+        const content = document.getElementById(`comment-${blog_id}`).value;
+
+        const response = await fetch(`http://127.0.0.1:8000/comments/${blog_id}`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ content })
+        });
+
+        if (response.ok) {
+            alert("Commentaire ajouté !");
+            fetchComments(blog_id);
+        } else {
+            alert("Erreur lors de l'ajout du commentaire.");
+        }
+    }
+
+    fetchArticles();
+</script>
+
+</body>
+</html>
+
+
+<!-- ********************************Second essaie -->
+<!-- 
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion & Upload de fichier</title>
+</head>
+<body>
+    <h2>Connexion</h2>
+    <label for="email">Email :</label>
+    <input type="text" id="email" placeholder="Votre email"><br><br>
+
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" placeholder="Votre mot de passe"><br><br>
+
+    <button onclick="login()">Se connecter</button>
+
+    <h2>Uploader un fichier</h2>
+    <input type="file" id="fileInput">
+    <input type="text" id="description" placeholder="Ajoutez une description">
+    <button onclick="uploadFile()">Envoyer</button>
+
+    <p id="response"></p>
+
+    <script>
+        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2xvQGdtYWlsLmNvbSIsImV4cCI6MTc0MDUzMzMyOX0.xDfie2nYLANBRVmlYnKGYdWKuLXXHZHGVeAkAUzppP4";  // Stocke le token JWT après connexion
+
+        async function login() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const formData = new URLSearchParams();
+            formData.append("username", email);
+            formData.append("password", password);
+
+            const response = await fetch("http://127.0.0.1:8000/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                token = data.access_token;  // Stocke le token
+                alert("Connexion réussie !");
+            } else {
+                alert("Erreur : " + data.detail);
+            }
+        }
+
+        async function uploadFile() {
+            if (!token) {
+                alert("Veuillez vous connecter d'abord !");
+                return;
+            }
+
+            const fileInput = document.getElementById('fileInput').files[0];
+            const description = document.getElementById('description').value;
+            const formData = new FormData();
+
+            formData.append("file", fileInput);
+            formData.append("description", description);
+
+            const response = await fetch("http://127.0.0.1:8000/media/upload/", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById("response").innerText = "Fichier uploadé avec succès : " + data.file_url;
+            } else {
+                document.getElementById("response").innerText = "Erreur : " + data.detail;
+            }
+        }
+    </script>
+</body>
+</html> -->
+
+<!-- ******************************************** 1er essaie -->
+<!-- <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de fichier</title>
+</head>
+<body>
+    <h2>Uploader un fichier</h2>
+    
+    <input type="file" id="fileInput">
+    <input type="text" id="description" placeholder="Ajoutez une description">
+    <button onclick="uploadFile()">Envoyer</button>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput').files[0];
+            const description = document.getElementById('description').value;
+            const formData = new FormData();
+
+            formData.append("file", fileInput);
+            formData.append("description", description);
+
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2xvQGdtYWlsLmNvbSIsImV4cCI6MTc0MDUzMzMyOX0.xDfie2nYLANBRVmlYnKGYdWKuLXXHZHGVeAkAUzppP4";  // Remplace par ton vrai token JWT
+
+            const response = await fetch("http://127.0.0.1:8000/media/upload/", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            console.log(data);
+            alert(JSON.stringify(data));
+        }
+    </script>
+</body>
+</html> -->

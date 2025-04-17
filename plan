@@ -1,0 +1,27 @@
+📌 Options pour la suite
+1️⃣ Ajout d’une Gestion Avancée des Utilisateurs
+🔹 Rôles et permissions : Admins, rédacteurs, utilisateurs normaux
+🔹 Profil utilisateur : Ajout d’une bio, d’un avatar et d’autres infos
+🔹 Mot de passe oublié : Implémenter un système de réinitialisation
+2️⃣ Ajout d’un Système de Catégorisation des Articles
+🔹 Associer chaque article à une catégorie
+🔹 Créer une API pour gérer les catégories
+🔹 Filtrer les articles par catégorie
+3️⃣ Recherche et Filtrage Avancés
+🔹 Recherche par mots-clés dans les articles
+🔹 Filtrer les articles par auteur, date ou popularité
+4️⃣ Ajout d’un Système de Likes/Dislikes
+🔹 Permettre aux utilisateurs d’aimer ou ne pas aimer un article
+🔹 Afficher le nombre de likes/dislikes sous chaque article
+5️⃣ Intégration avec un Dashboard d’Administration
+🔹 Créer un espace admin pour gérer les articles, utilisateurs, et médias
+🔹 Visualiser les statistiques des publications
+
+
+
+
+
+🔹 Implémentation du système de réinitialisation de mot de passe
+On va suivre ces étapes : 1️⃣ Génération d'un lien de réinitialisation avec un token sécurisé
+2️⃣ Envoi d'un email contenant le lien (ou affichage en console pour le test)
+3️⃣ Endpoint pour définir un nouveau mot de passe via le token

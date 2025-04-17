@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Livres</title>
+    <script>
+        const API_URL = "http://127.0.0.1:8000/bibliotheque/";
+        const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2xvQGdtYWlsLmNvbSIsImV4cCI6MTc0MTE4MDc2Mn0.-j_JHMI4LAJKLz5UVQUorsWHA7zz5dIdfmCK494H-TU";
+
+        async function fetchBooks() {
+            const response = await fetch(API_URL, {
+                headers: { "Authorization": `Bearer ${TOKEN}` }
+            });
+            const books = await response.json();
+            let booksList = document.getElementById("booksList");
+            let bookSelect = document.getElementById("bookSelect");
+            booksList.innerHTML = "";
+            bookSelect.innerHTML = "<option value=''>Sélectionner un livre</option>";
+            books.forEach(book => {
+                booksList.innerHTML += `
+                    <li>
+                        ${book.title} - ${book.author} 
+                        <button onclick="deleteBook(${book.id})">Supprimer</button> 
+                        <button onclick="populateUpdateForm(${book.id}, '${book.title}', '${book.author}', '${book.description}', '${book.file_url}')">Modifier</button>
+                        <a href="${book.file_url}" target="_blank">Ouvrir</a>
+                        <a href="${book.file_url}" download>Télécharger</a>
+                    </li>`;
+                bookSelect.innerHTML += `<option value="${book.id}">${book.title}</option>`;
+            });
+        }
+
+        async function addBook() {
+            let formData = new FormData();
+            formData.append("title", document.getElementById("title").value);
+            formData.append("author", document.getElementById("author").value);
+            formData.append("description", document.getElementById("description").value);
+            formData.append("file", document.getElementById("file").files[0]);
+            
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${TOKEN}` },
+                body: formData
+            });
+            if (response.ok) {
+                alert("Livre ajouté !");
+                fetchBooks();
+            } else {
+                alert("Erreur lors de l'ajout du livre");
+            }
+        }
+
+        async function deleteBook(id) {
+            const response = await fetch(`${API_URL}${id}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${TOKEN}` }
+            });
+            if (response.ok) {
+                alert("Livre supprimé !");
+                fetchBooks();
+            } else {
+                alert("Erreur lors de la suppression");
+            }
+        }
+
+        function populateUpdateForm(id, title, author, description, file_url) {
+            document.getElementById("bookSelect").value = id;
+            document.getElementById("updateTitle").value = title;
+            document.getElementById("updateAuthor").value = author;
+            document.getElementById("updateDescription").value = description;
+            document.getElementById("currentFile").href = file_url;
+            document.getElementById("currentFile").textContent = "Voir le fichier actuel";
+        }
+
+        async function updateBook() {
+            let bookId = document.getElementById("bookSelect").value;
+            if (!bookId) {
+                alert("Veuillez sélectionner un livre à modifier");
+                return;
+            }
+            let formData = new FormData();
+            formData.append("title", document.getElementById("updateTitle").value);
+            formData.append("author", document.getElementById("updateAuthor").value);
+            formData.append("description", document.getElementById("updateDescription").value);
+            let fileInput = document.getElementById("updateFile");
+            if (fileInput.files.length > 0) {
+                formData.append("file", fileInput.files[0]);
+            }
+            
+            const response = await fetch(`${API_URL}${bookId}`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${TOKEN}` },
+                body: formData
+            });
+            if (response.ok) {
+                alert("Livre mis à jour !");
+                fetchBooks();
+            } else {
+                alert("Erreur lors de la mise à jour");
+            }
+        }
+
+        window.onload = fetchBooks;
+    </script>
+</head>
+<body>
+    <h1>Gestion des Livres</h1>
+    <h2>Ajouter un Livre</h2>
+    <form onsubmit="event.preventDefault(); addBook();">
+        <label>Titre : <input type="text" id="title" required></label><br>
+        <label>Auteur : <input type="text" id="author" required></label><br>
+        <label>Description : <input type="text" id="description"></label><br>
+        <label>Fichier : <input type="file" id="file" required></label><br>
+        <button type="submit">Ajouter</button>
+    </form>
+    
+    <h2>Modifier un Livre</h2>
+    <form onsubmit="event.preventDefault(); updateBook();">
+        <label>Choisir un livre : <select id="bookSelect"></select></label><br>
+        <label>Nouveau Titre : <input type="text" id="updateTitle"></label><br>
+        <label>Nouvel Auteur : <input type="text" id="updateAuthor"></label><br>
+        <label>Nouvelle Description : <input type="text" id="updateDescription"></label><br>
+        <label>Nouveau Fichier : <input type="file" id="updateFile"></label><br>
+        <a id="currentFile" href="#" target="_blank">Aucun fichier sélectionné</a><br>
+        <button type="submit">Mettre à jour</button>
+    </form>
+    
+    <h2>Liste des Livres</h2>
+    <ul id="booksList"></ul>
+</body>
+</html>
