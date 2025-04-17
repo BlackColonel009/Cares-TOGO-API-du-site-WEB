@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["python311Full", "pip", "gcc", "postgresql"]
+nixPkgs = ["python311Full", "gcc", "postgresql"]
 
 [phases.install]
 cmds = [
@@ -8,4 +8,4 @@ cmds = [
 ]
 
 [start]
-cmd = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"
+cmd = "python3.11 -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"
