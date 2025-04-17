@@ -3,6 +3,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.config import DATABASE_URL
+# from dotenv import load_dotenv
+
 import psycopg2
 import os
 
