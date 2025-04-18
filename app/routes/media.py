@@ -8,7 +8,7 @@ from app.models.model_media import Media
 from app.models.model_users import User
 from app.services import get_current_user, get_admin_user
 from typing import Optional, List
-from app.schemas import MediaResponse
+# from app.schemas import MediaResponse
 
 
 router = APIRouter()
@@ -53,11 +53,10 @@ def upload_file(
 
     return {"message": "Fichier uploadé avec succès", "media_id": new_media.id, "file_url": file_path}
 
-@router.get("/", response_model=List[MediaResponse])
+@router.get("/")
 def get_all_media(db: Session = Depends(get_db)):
     """ Récupérer tous les médias """
-    medias = db.query(Media).all()
-    return [MediaResponse.model_validate(m) for m in medias]  # ✅ Conversion Pydantic
+    return db.query(Media).all()
 
 @router.get("/{media_id}")
 def get_media(media_id: int, db: Session = Depends(get_db)):
