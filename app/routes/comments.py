@@ -14,10 +14,11 @@ def add_comment(blog_id: int, comment: CommentCreate, db: Session = Depends(get_
     """Ajouter un commentaire à un article"""
     return create_comment(db=db, blog_id=blog_id, user_id=user.id, content=comment.content)
 
-@router.get("/{blog_id}", response_model=list[CommentResponse])
+@router.get("/{blog_id}", response_model=List[CommentResponse])
 def list_comments(blog_id: int, db: Session = Depends(get_db)):
     """Lister tous les commentaires d’un article"""
-    return get_comments_by_blog(db, blog_id)
+    comments = get_comments_by_blog(db, blog_id)
+    return [CommentResponse.model_validate(c) for c in comments]  # ✅ Conversion
 
 @router.delete("/{comment_id}")
 def remove_comment(comment_id: int, db: Session = Depends(get_db), admin: User = Depends(get_admin_user)):

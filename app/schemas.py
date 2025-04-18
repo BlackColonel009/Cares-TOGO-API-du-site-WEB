@@ -21,11 +21,12 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
-    avatar_url: Optional[str] = None  # ✅ Ajout de l'avatar
+    avatar_url: Optional[str] = None
     bio: Optional[str] = None
 
 class UserResponse(UserBase):
     id: int
+    is_admin: bool  # ✅ CE CHAMP ÉTAIT MANQUANT
     created_at: datetime
 
     class Config:

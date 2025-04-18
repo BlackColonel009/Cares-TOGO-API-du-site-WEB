@@ -96,7 +96,7 @@ def admin_only_route(admin: User = Depends(services.get_admin_user)):
 @router.get("/profile", response_model=UserResponse)
 def get_profile(user: User = Depends(get_current_user)):
     """Récupérer le profil de l'utilisateur connecté"""
-    return user
+    return UserResponse.model_validate(user)  # ✅ Conversion explicite
 
 @router.put("/profile")
 async def update_profile(

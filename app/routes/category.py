@@ -16,7 +16,8 @@ def create_new_category(category: CategoryCreate, db: Session = Depends(get_db),
         raise HTTPException(status_code=400, detail="Cette catégorie existe déjà.")
     return create_category(db, category)
 
-@router.get("/", response_model=list[CategoryResponse])
+@router.get("/", response_model=List[CategoryResponse])
 def list_categories(db: Session = Depends(get_db)):
     """Lister toutes les catégories"""
-    return get_all_categories(db)
+    categories = get_all_categories(db)
+    return [CategoryResponse.model_validate(cat) for cat in categories]  # ✅ conversion

@@ -90,7 +90,8 @@ def list_books(db: Session = Depends(get_db), search: Optional[str] = None):
     books = get_books(db, search)
     if not books:
         raise HTTPException(status_code=404, detail="📚 Aucun livre disponible pour le moment.")
-    return books
+    
+    return [BookResponse.model_validate(b) for b in books]  # ✅ Conversion
 
 
 @router.put("/{book_id}", response_model=BookResponse)

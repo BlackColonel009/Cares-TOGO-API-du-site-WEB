@@ -43,11 +43,11 @@ async def add_member(
     return new_member  # ✅ Retourne bien un modèle Pydantic ou un dictionnaire
 
 
-@router.get("/", response_model=list[MemberResponse])
+@router.get("/", response_model=List[MemberResponse])
 def list_members(db: Session = Depends(get_db)):
     """Lister tous les membres"""
     members = db.query(Member).all()
-    return members
+    return [MemberResponse.model_validate(m) for m in members]  # ✅ Conversion Pydantic
 
 @router.get("/{member_id}", response_model=MemberResponse)
 def get_member(member_id: int, db: Session = Depends(get_db)):

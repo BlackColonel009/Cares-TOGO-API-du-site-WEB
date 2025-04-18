@@ -37,10 +37,11 @@ async def add_partner(
     partner = PartnerCreate(name=name, description=description, website_url=website_url, logo_url=logo_url)
     return create_partner(db, partner)
 
-@router.get("/", response_model=list[PartnerResponse])
+@router.get("/", response_model=List[PartnerResponse])
 def list_partners(db: Session = Depends(get_db)):
     """Récupérer tous les partenaires"""
-    return get_partners(db)
+    db_partners = get_partners(db)
+    return [PartnerResponse.model_validate(p) for p in db_partners] 
 
 @router.put("/{partner_id}", response_model=PartnerResponse)
 async def edit_partner(

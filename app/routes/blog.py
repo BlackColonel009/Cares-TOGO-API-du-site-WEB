@@ -61,6 +61,16 @@ async def create_post(
 
 from sqlalchemy.orm import joinedload
 
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session, joinedload
+from typing import Optional, List
+from app.database import get_db
+from app.schemas import BlogPostResponse
+from app.models.model_blog import BlogPost
+from app.models.model_category import Category
+
+router = APIRouter()
+
 @router.get("/", response_model=List[BlogPostResponse])
 def list_blog_posts(
     db: Session = Depends(get_db),
@@ -72,25 +82,24 @@ def list_blog_posts(
     """ Récupérer la liste des articles avec recherche et filtres """
     query = db.query(BlogPost).options(joinedload(BlogPost.user))  # 🔹 Charger l'utilisateur
 
-    # 🔍 Filtre par mots-clés
     if search:
-        query = query.filter(BlogPost.title.ilike(f"%{search}%") | BlogPost.content.ilike(f"%{search}%"))
+        query = query.filter(
+            BlogPost.title.ilike(f"%{search}%") | BlogPost.content.ilike(f"%{search}%")
+        )
 
-    # 📂 Filtre par catégorie
     if category:
         query = query.join(BlogPost.categories).filter(Category.name == category)
 
-    # 🧑 Filtre par auteur
     if author_id:
         query = query.filter(BlogPost.user_id == author_id)
 
-    # 📅 Tri par date
-    if sort_by == "oldest":
-        query = query.order_by(BlogPost.created_at.asc())
-    else:
-        query = query.order_by(BlogPost.created_at.desc())
+    query = query.order_by(
+        BlogPost.created_at.asc() if sort_by == "oldest" else BlogPost.created_at.desc()
+    )
 
-    return query.all()
+    results = query.all()
+    return [BlogPostResponse.model_validate(post) for post in results]  # ✅ Conversion
+
 
 
 @router.get("/{blog_id}", response_model=BlogPostResponse)

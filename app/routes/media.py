@@ -50,10 +50,11 @@ def upload_file(
 
     return {"message": "Fichier uploadé avec succès", "media_id": new_media.id, "file_url": file_path}
 
-@router.get("/")
+@router.get("/", response_model=List[MediaResponse])
 def get_all_media(db: Session = Depends(get_db)):
     """ Récupérer tous les médias """
-    return db.query(Media).all()
+    medias = db.query(Media).all()
+    return [MediaResponse.model_validate(m) for m in medias]  # ✅ Conversion Pydantic
 
 @router.get("/{media_id}")
 def get_media(media_id: int, db: Session = Depends(get_db)):
