@@ -30,6 +30,7 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat()}
 
 class ForceAdminRequest(BaseModel):
     email: EmailStr
@@ -62,6 +63,7 @@ class BookResponse(BookBase):
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat()}
 
 # ✅ Ajout de BlogPostUpdate
 class BlogPostUpdate(BaseModel):
@@ -111,7 +113,8 @@ class CommentResponse(CommentBase):
 
     class Config:
         from_attributes = True  # ✅ Convertir SQLAlchemy en Pydantic
-
+        json_encoders = {datetime: lambda v: v.isoformat()}
+        
 #Categories
 class CategoryBase(BaseModel):
     name: str
@@ -124,6 +127,7 @@ class CategoryResponse(CategoryBase):
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat()}
 
 #Partners
 
@@ -149,6 +153,7 @@ class PartnerResponse(PartnerBase):
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat()}
         
 #MEMBRES
 
@@ -172,6 +177,7 @@ class MemberResponse(MemberBase):
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat()}
 
 '''reccuperation de mots de pass'''
 
