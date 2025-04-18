@@ -31,6 +31,9 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
+class ForceAdminRequest(BaseModel):
+    email: EmailStr
+
 
 #BookCreate
 class BookBase(BaseModel):
@@ -212,3 +215,5 @@ class HomepageResponse(BaseModel):
     class Config:
         from_attributes = True
         json_encoders = {datetime: lambda v: v.isoformat()}  # ✅ Convertit `datetime` en `str`
+        
+

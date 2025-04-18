@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form, Body
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr
@@ -10,8 +10,8 @@ from app.models.model_users import User
 # from app.services import authenticate_user, create_access_token
 from app.services import create_access_token
 from app import services  # ✅ Import de services
-from app.services import get_admin_user, get_current_user, update_user_profile, get_user_by_id, get_password_hash
-from app.schemas import UserUpdate, UserResponse,ForgotPasswordRequest
+from app.services import get_admin_user, get_current_user, update_user_profile, get_user_by_id, get_password_hash, force_user_as_admin
+from app.schemas import UserUpdate, UserResponse,ForgotPasswordRequest, ForceAdminRequest
 import os
 import random
 import string
@@ -177,4 +177,9 @@ def reset_password( token: str = Form(...),
     db.commit()
 
     return {"message": "Mot de passe réinitialisé avec succès"}
+
+
+
+
+
 

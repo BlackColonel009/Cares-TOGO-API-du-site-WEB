@@ -86,6 +86,19 @@ def get_admin_user(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Accès refusé")
     return current_user
 
+def force_user_as_admin(db: Session, email: str):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        return None
+
+    user.is_admin = True  # ✅ promotion
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+
+
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 

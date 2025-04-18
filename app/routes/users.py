@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 # from app import schemas, services, database
 # from app.schemas import UserCreate, UserLogin
-from app.schemas import UserCreate, UserResponse
+from app.schemas import UserCreate, UserResponse, ForceAdminRequest
 from fastapi.security import OAuth2PasswordRequestForm
 from app.database import get_db  # ✅ Assurez-vous que cette ligne est présente !
 from app.models import model_users  # ✅ Ajout de l'import de `models`
@@ -45,3 +45,10 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
     return user
 
+@router.put("/force-admin")
+def force_admin(data: ForceAdminRequest, db: Session = Depends(get_db)):
+    user = services.force_user_as_admin(db, data.email)
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+
+    return {"message": f"{user.username} est maintenant administrateur ✅"}
