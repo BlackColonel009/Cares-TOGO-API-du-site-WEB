@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 import os
 import shutil
+from typing import Optional, List
 from app.models.model_members import Member
 from app.models.model_users import User
 from app.schemas import MemberCreate, MemberUpdate, MemberResponse

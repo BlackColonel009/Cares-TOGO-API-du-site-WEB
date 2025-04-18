@@ -223,4 +223,20 @@ class HomepageResponse(BaseModel):
         from_attributes = True
         json_encoders = {datetime: lambda v: v.isoformat()}  # ✅ Convertit `datetime` en `str`
         
+#Media
+
+class MediaResponse(BaseModel):
+    id: int
+    name: str
+    file_url: str
+    media_type: str
+    description: str
+    created_at: datetime
+    updated_at: datetime
+    user_id: Optional[int]  # si `Media` est relié à un utilisateur
+
+    class Config:
+        from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat()}
+        
 

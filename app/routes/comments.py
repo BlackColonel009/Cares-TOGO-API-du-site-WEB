@@ -6,6 +6,7 @@ from app.models.model_users import User
 from app.schemas import CommentCreate, CommentResponse
 from app.services import create_comment, get_comments_by_blog, delete_comment
 from app.services import get_current_user, get_admin_user
+from typing import Optional, List
 
 router = APIRouter()
 

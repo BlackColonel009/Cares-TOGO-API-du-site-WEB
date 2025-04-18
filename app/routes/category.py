@@ -5,6 +5,7 @@ from app.schemas import CategoryCreate, CategoryResponse
 from app.services import create_category, get_all_categories, get_category_by_name
 from app.models.model_users import User
 from app.services import get_admin_user
+from typing import Optional, List
 
 router = APIRouter(prefix="/categories", tags=["Catégories"])
 

@@ -7,6 +7,9 @@ from app.database import get_db
 from app.models.model_media import Media
 from app.models.model_users import User
 from app.services import get_current_user, get_admin_user
+from typing import Optional, List
+from app.schemas import MediaResponse
+
 
 router = APIRouter()
 

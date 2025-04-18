@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import shutil
 import os
 from app.database import get_db
+from typing import Optional, List
 from app.models.model_users import User
 from app.schemas import PartnerCreate, PartnerUpdate, PartnerResponse
 from app.services import create_partner, get_partners, get_partner_by_id, update_partner, delete_partner, get_admin_user
