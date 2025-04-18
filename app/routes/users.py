@@ -35,7 +35,9 @@ def get_all_users(db: Session = Depends(get_db)):
     users = db.query(model_users.User).all()
     if not users:
         raise HTTPException(status_code=404, detail="Aucun utilisateur trouvé")
-    return users
+    
+    # ✅ Convertir chaque User SQLAlchemy en UserResponse Pydantic
+    return [UserResponse.model_validate(user) for user in users]
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, db: Session = Depends(get_db)):
