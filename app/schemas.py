@@ -239,4 +239,26 @@ class MediaResponse(BaseModel):
         from_attributes = True
         json_encoders = {datetime: lambda v: v.isoformat()}
         
+#Contacts
 
+class ContactOut(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ContactCreate(BaseModel):
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+
+#Newsletter
+class NewsletterSubscribe(BaseModel):
+    email: EmailStr

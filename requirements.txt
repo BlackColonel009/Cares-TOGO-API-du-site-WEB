@@ -9,3 +9,4 @@ python-jose
 passlib[bcrypt]
 pydantic==2.10.6
 pydantic[email]
+fastapi-mail==1.4.2

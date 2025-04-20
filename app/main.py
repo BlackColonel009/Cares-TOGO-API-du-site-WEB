@@ -18,14 +18,20 @@ logger.info(f"ENCODAGE LOCALE : {locale.getpreferredencoding()}")
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
+from app.database import engine
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from app.database import get_db
+from sqlalchemy.orm import Session
+# from models.model_newsletter import NewsletterSubscriber
+
 from app.database import Base, engine
 from app.routes import (
     auth, media, blog, comments, category, bibliotheque,
-    partners, members, homepage, stats, users
+    partners, members, homepage, stats, users, contact, newsletter
 )
 
 app = FastAPI()
@@ -34,9 +40,23 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 logger.info("✅ Tables créées avec succès !")
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to CARES TOGO API!"}
+# @app.get("/")
+# def read_root():
+#     return {"message": "Welcome to CARES TOGO API!"}
+
+# @app.get("/force-drop-newsletter-index")
+# def force_drop_newsletter_index():
+#     try:
+#         with engine.connect() as connection:
+#             connection.execute(text("DROP INDEX IF EXISTS ix_newsletter_subscribers_id"))
+#         return {"message": "✅ Index 'ix_newsletter_subscribers_id' supprimé avec succès."}
+#     except Exception as e:
+#         return {"error": str(e)}
+
+# @app.get("/force-create-table")
+# def create_contact_table(db: Session = Depends(get_db)):
+#     NewsletterSubscriber.__table__.create(bind=db.bind, checkfirst=True)
+#     return {"message": "Table créée (si elle n'existait pas déjà)."}
 
 # ✅ Inclusion des routers (sans doublon)
 app.include_router(users.router, prefix="/users", tags=["Utilisateurs"])
@@ -50,6 +70,9 @@ app.include_router(partners.router, prefix="/partners", tags=["Partenaires"])
 app.include_router(members.router, prefix="/members", tags=["Membres"])
 app.include_router(homepage.router, prefix="/homepage", tags=["Page_Accueil"])
 app.include_router(stats.router, prefix="/api", tags=["Statistiques"])
+app.include_router(contact.router, prefix="/contact", tags=["Contact"])
+app.include_router(newsletter.router, prefix="/newsletter", tags=["Newsletter"])
+
 
 # ✅ Fichiers statiques (uploads)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
