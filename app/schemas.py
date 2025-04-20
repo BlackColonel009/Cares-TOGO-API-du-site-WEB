@@ -42,10 +42,11 @@ class BookBase(BaseModel):
     title: str
     author: str
     description: Optional[str] = None
+    cover_url: Optional[str] = None
 
 class BookCreate(BookBase):
     file_url: str
-    cover_url: str
+    cover_url: Optional[str] = None
 
 class BookUpdate(BaseModel):
     title: Optional[str] = None
@@ -57,7 +58,6 @@ class BookUpdate(BaseModel):
 class BookResponse(BookBase):
     id: int
     file_url: str
-    cover_url: str
     created_at: datetime
     updated_at: datetime
     user_id: int

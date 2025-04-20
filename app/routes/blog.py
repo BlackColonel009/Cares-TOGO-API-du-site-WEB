@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, UploadFile, File, Form
 from typing import Optional, List
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.models.model_blog import BlogPost
 from app.models.model_users import User
@@ -10,6 +10,7 @@ from app.services import create_blog_post, get_all_blog_posts, get_blog_post, up
 from app.services import get_current_user, get_admin_user
 import shutil
 import os
+
 
 router = APIRouter()
 
@@ -56,20 +57,6 @@ async def create_post(
 
     return new_blog
 
-
-
-
-from sqlalchemy.orm import joinedload
-
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session, joinedload
-from typing import Optional, List
-from app.database import get_db
-from app.schemas import BlogPostResponse
-from app.models.model_blog import BlogPost
-from app.models.model_category import Category
-
-router = APIRouter()
 
 @router.get("/", response_model=List[BlogPostResponse])
 def list_blog_posts(

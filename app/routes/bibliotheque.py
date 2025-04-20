@@ -55,7 +55,7 @@ async def add_book(
     author: str = Form(...),
     description: str = Form(None),
     file: UploadFile = File(...),
-    cover_url: UploadFile = File(...),
+    cover_url: UploadFile = File(None),
     db: Session = Depends(get_db),
     admin: User = Depends(get_admin_user)
 ):
@@ -79,7 +79,7 @@ async def add_book(
         "author": author.strip(),
         "description": description.strip() if description else None,
         "file_url": file_path,
-        "cover_url":cover_path,
+        "cover_url":cover_path if cover_path else None,
     }   
 
     return create_book(db, book_data, user_id)

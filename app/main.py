@@ -40,9 +40,9 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 logger.info("✅ Tables créées avec succès !")
 
-# @app.get("/")
-# def read_root():
-#     return {"message": "Welcome to CARES TOGO API!"}
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to CARES TOGO API!"}
 
 # @app.get("/force-drop-newsletter-index")
 # def force_drop_newsletter_index():
