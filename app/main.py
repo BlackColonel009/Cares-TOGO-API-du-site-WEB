@@ -4,6 +4,10 @@ import urllib.parse
 import locale
 import logging
 
+from app.utils.policy import afficher_banner
+
+afficher_banner()
+
 # ✅ Configuration du logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,6 +43,8 @@ app = FastAPI()
 # ✅ Création automatique des tables
 Base.metadata.create_all(bind=engine)
 logger.info("✅ Tables créées avec succès !")
+
+
 
 @app.get("/")
 def read_root():
