@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\ASUS\Desktop\CARES TOGO\Cares TOGO API du site WEB\venv"
+VIRTUAL_ENV="C:\Users\ASUS\Desktop\CARES TOGO\carestogo-api\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
